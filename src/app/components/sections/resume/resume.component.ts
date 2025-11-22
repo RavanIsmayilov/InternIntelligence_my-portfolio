@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 })
 export class ResumeComponent implements OnInit {
   resumes: any[] = []; 
+  isLoading: boolean = false;
+  errorMessage: string = '';
 
   constructor(private resumeService: ResumeService) {}
 
@@ -19,15 +21,21 @@ export class ResumeComponent implements OnInit {
   }
 
   loadResumes(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
     this.resumeService.getResumes().subscribe({
       next: (data) => {
         this.resumes = data.map((resume: any) => ({
           ...resume,
           expanded: false
         }));
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error("API xətası:", err);
+        this.isLoading = false;
+        this.errorMessage = 'Failed to load resume data. Please refresh the page.';
+        this.resumes = [];
       }
     });
   }

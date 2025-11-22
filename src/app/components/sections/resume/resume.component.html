@@ -12,27 +12,43 @@
     </div>
 
     <div class="card flex flex-wrap gap-6 justify-center">
-        <ng-container *ngIf="resumes.length > 0; else noData">
-            <div *ngFor="let resume of resumes; let i = index" class="bg-[#161616] p-[30px] rounded-lg shadow-lg w-[48%] min-w-[300px]">
-                <p class="text-[#ffbd39] font-black text-[26px]">{{ resume.year }}</p>
-                <h2 class="text-[26px] text-white mt-4">{{ resume.title }}</h2>
-                <p class="text-sm text-[#7f7f7f] font-semibold mt-4 tracking-[3px]">
-                    {{ resume.institution || resume.company }}
-                </p>
-                
-                <p class="text-[#7f7f7f] mt-6 text-[16px] font-medium">
-                    {{ resume.expanded ? resume.description : (resume.description | slice:0:80) + '...' }}
-                </p>
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="w-full text-center py-8">
+            <p class="text-[#7f7f7f] text-lg">Loading resume data...</p>
+        </div>
 
-                <button (click)="toggleExpand(i)" class="mt-4 text-[#ffbd39] font-semibold text-sm cursor-pointer">
-                    {{ resume.expanded ? 'Show Less' : 'Show More' }}
-                </button>
-            </div>
+        <!-- Error Message -->
+        <div *ngIf="errorMessage && !isLoading" class="w-full text-center py-8">
+            <p class="text-red-500 text-lg">{{ errorMessage }}</p>
+            <button (click)="loadResumes()" class="mt-4 bg-[#ffbd39] text-black px-6 py-2 rounded-full font-semibold hover:bg-yellow-400 transition cursor-pointer">
+                Retry
+            </button>
+        </div>
+
+        <!-- Resume Data -->
+        <ng-container *ngIf="!isLoading && !errorMessage">
+            <ng-container *ngIf="resumes.length > 0; else noData">
+                <div *ngFor="let resume of resumes; let i = index" class="bg-[#161616] p-[30px] rounded-lg shadow-lg w-[48%] min-w-[300px]">
+                    <p class="text-[#ffbd39] font-black text-[26px]">{{ resume.year }}</p>
+                    <h2 class="text-[26px] text-white mt-4">{{ resume.title }}</h2>
+                    <p class="text-sm text-[#7f7f7f] font-semibold mt-4 tracking-[3px]">
+                        {{ resume.institution || resume.company }}
+                    </p>
+                    
+                    <p class="text-[#7f7f7f] mt-6 text-[16px] font-medium">
+                        {{ resume.expanded ? resume.description : (resume.description | slice:0:80) + '...' }}
+                    </p>
+
+                    <button (click)="toggleExpand(i)" class="mt-4 text-[#ffbd39] font-semibold text-sm cursor-pointer">
+                        {{ resume.expanded ? 'Show Less' : 'Show More' }}
+                    </button>
+                </div>
+            </ng-container>
+
+            <ng-template #noData>
+                <p class="text-[#7f7f7f] mt-4 text-center">No resume data available.</p>
+            </ng-template>
         </ng-container>
-
-        <ng-template #noData>
-            <p class="text-[#7f7f7f] mt-4 text-center">No resume data available.</p>
-        </ng-template>
     </div>
 
     <div class="flex justify-center mt-12">
